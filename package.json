@@ -1,0 +1,19 @@
+{
+  "name": "website-detail-crawler",
+  "version": "1.0.0",
+  "description": "A demo package for crawing the basic details of a website ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "website",
+    "crawler"
+  ],
+  "author": "Nikhil <mehandirattanikhil@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "request": "^2.72.0"
+  }
+}
