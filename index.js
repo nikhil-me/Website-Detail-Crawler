@@ -2,7 +2,7 @@ var request = require('request').defaults({proxy:'http://ipg_2012066:karankannu@
 var cheerio = require('cheerio');
 var URL = require('url-parse');
 
-var START_URL = "https://www.rentomojo.com/";
+var START_URL = "http://www.roposo.com/";
 
 
 
@@ -18,7 +18,14 @@ function getUrls($,callback){
 }
 
 function urlss(data){
-  console.log(data);
+  // console.log(data);
+  for(var i=0,len=data.length;i<len;i++){
+    // console.log(START_URL+data[i]);
+    if(START_URL+data[i] === "http://www.roposo.com//about"){
+      console.log("@");
+      crawl(START_URL+data[i]);
+    }
+  }
 }
 
 request(START_URL, function (error, response, html) {
@@ -30,3 +37,29 @@ request(START_URL, function (error, response, html) {
       getUrls($,urlss);
   }
 });
+
+function crawl(url){
+  console.log("##");
+  request(url,function(error,response,html){
+     if(error){
+      console.log(error);
+    }else if (response.statusCode == 200) {
+      var $ = cheerio.load(html);
+      
+        getPtag($,showPtag);
+    } 
+  });
+}
+
+
+function getPtag($,callback){
+  var ptag=[];
+  $('p').each(function(){
+    ptag.push($(this).text());
+  });
+  callback(ptag);
+}
+
+function showPtag(data){
+  console.log(data);
+}
