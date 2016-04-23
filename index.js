@@ -147,7 +147,10 @@ request(alexa_url, function (error, response, html) {
 function alexaDetails($,callback){
   var details={
     'Global Rank': '',
-    'India Rank' : ''
+    'India Rank' : '',
+    'Bounce Rate' : '',
+    'Daily Pageviews per Visitor' : '',
+    'Daily Time On Site' : ''
   };
   var grank=$("img[title|='Global rank icon']").next().text();
   var irank=$("img[title|='India Flag']").next().text();
@@ -157,6 +160,27 @@ function alexaDetails($,callback){
   irank=irank.replace(/ /g,'');
   details['Global Rank']=grank;
   details['India Rank']=irank;
+
+
+  var brate=$(".span4:nth-child(1)").text();
+  brate=brate.replace(/(\r\n|\n|\r)/gm,"");
+  brate=brate.substr(11,6);
+  details['Bounce Rate']=brate;
+
+
+  var dailyvisit=$(".span4:nth-child(2)").text();
+  dailyvisit=dailyvisit.replace(/(\r\n|\n|\r)/gm,"");
+  dailyvisit=dailyvisit.substr(73,4);
+  details['Daily Pageviews per Visitor']=dailyvisit;
+
+
+  var dailytime=$(".span4:nth-child(3)").text();
+  dailytime=dailytime.replace(/(\r\n|\n|\r)/gm,"");
+  // for(var i=0,len=dailytime.length;i<len;i++){
+  //   console.log(i+":"+dailytime[i]);
+  // }
+  dailytime=dailytime.substr(18,4);
+  details['Daily Time On Site']=dailytime;  
   callback(details);
 }
 
