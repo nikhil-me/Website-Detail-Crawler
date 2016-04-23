@@ -3,15 +3,10 @@ var cheerio = require('cheerio');
 var URL = require('url-parse');
 var fs = require('fs');
 
-var START_URL = "http://www.roposo.com";
 
-
-
-var links=[];
-
-
-
-
+//-------------------------------------------
+//-------------Contact Details-----------------
+//-------------------------------------------
 
 function getContact($,callback){
   var z=String($.html());
@@ -27,7 +22,6 @@ function getContact($,callback){
     }
     if(tex[i].match('^[0-9()-]+$')){
       if(tex[i].length==10){
-        // console.log(tex[i]);
         phone.push(tex[i]);
       }
     }
@@ -48,13 +42,17 @@ function showContact(data,data1){
   });
 }
 
+
+//-------------------------------------------
+//-------------About Details-----------------
+//-------------------------------------------
+
 function getAbout($,callback){
   var ptag=[];
   $('p').each(function(index){
     ptag.push(index+":\n");
     ptag.push($(this).text());
   });
-  ptag=ptag.replace(/(\r\n|\n|\r)/gm,"")
   callback(ptag);
 }
 
@@ -66,7 +64,6 @@ function showAbout(data){
      }
   console.log("Data written successfully!");
   });
-  // console.log(data);
 }
 
 
@@ -95,7 +92,25 @@ function crawlAbout(url){
 }
 
 
-function getUrls($,callback){
+//-------------------------------------------
+//----------Url On Home Page-----------------
+//-------------------------------------------
+
+function urlss(data,START_URL){
+  for(var i=0,len=data.length;i<len;i++){
+    if(START_URL+data[i] === "http://www.roposo.com/contact"){
+      crawlContact(START_URL+data[i]);
+    }
+    if(START_URL+data[i] === "http://www.roposo.com/about"){
+      crawlAbout(START_URL+data[i]);
+    }
+
+  }
+}
+
+
+function getUrls($,START_URL,callback){
+  var links=[];
   var z=String($.html());
 
   // This is to find all the urls in href
@@ -121,35 +136,15 @@ function getUrls($,callback){
 
   // This is by using jquery
   //
-
+  // var links=[];
   /* var link = $("a[href^='/']");
   // link.each(function() {
   //     links.push($(this).attr('href'));
     });*/
-  callback(links);
+  callback(links,START_URL);
 }
 
-function urlss(data){
-  console.log(data);
-  // console.log("@");
-  // for(var i=0,len=data.length;i<len;i++){
-  //   if(START_URL+data[i] === "http://www.roposo.com/contact"){
-  //   }
-  //   if(START_URL+data[i] === "http://www.roposo.com/about"){
-  //     crawlAbout(START_URL+data[i]);
-  //   }
 
-  // }
-}
-
-request(START_URL, function (error, response, html) {
-  if(error){
-    console.log(error);
-  }else if (response.statusCode == 200) {
-    var $ = cheerio.load(html);
-      getUrls($,urlss);
-  }
-});
 
 
 
@@ -157,18 +152,6 @@ request(START_URL, function (error, response, html) {
 //-------------------------------------------
 //-------------Alexa Details-----------------
 //-------------------------------------------
-
-var alexa_url = 'http://www.alexa.com/siteinfo/'+ START_URL;
-
-// request(alexa_url, function (error, response, html) {
-//   if(error){
-//     console.log(error);
-//   }else if (response.statusCode == 200) {
-//     var $ = cheerio.load(html);
-//     // console.log($.html());
-//     alexaDetails($,showAlexaDetails);
-//   }
-// });
 
 
 function alexaDetails($,callback){
@@ -219,7 +202,6 @@ function showAlexaDetails(data){
     alexaDetail.push(d+':'+data[d]);
     alexaDetail.push('\n');
  }
- console.log(alexaDetail);
  console.log("Going to write into Alexa file");
   fs.writeFile('Alexa.txt', alexaDetail,  function(err) {
      if (err) {
@@ -228,3 +210,39 @@ function showAlexaDetails(data){
   console.log("Data written successfully!");
   });
 }
+
+
+
+
+var alexa=function(START_URL){
+  var alexa_url = 'http://www.alexa.com/siteinfo/'+START_URL;
+  request(alexa_url, function (error, response, html) {
+    if(error){
+      console.log(error);
+    }else if (response.statusCode == 200) {
+      var $ = cheerio.load(html);
+      alexaDetails($,showAlexaDetails);
+    }
+  });
+}
+
+// alexa('http://www.roposo.com/');
+
+var contactAndAbout=function(START_URL){
+  if(START_URL[START_URL.length-1]=='/'){
+    START_URL=START_URL.slice(0,-1);
+  }
+  request(START_URL, function (error, response, html) {
+    if(error){
+      console.log(error);
+    }else if (response.statusCode == 200) {
+      var $ = cheerio.load(html);
+        getUrls($,START_URL,urlss);
+    }
+  });
+}
+
+// contactAndAbout('http://www.roposo.com/');
+
+exports alexa=alexa;
+exports contactAndAbout=contactAndAbout;
