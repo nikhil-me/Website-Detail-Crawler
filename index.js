@@ -177,23 +177,27 @@ function alexaDetails($,callback){
 
   var dailytime=$(".span4:nth-child(3)").text();
   dailytime=dailytime.replace(/(\r\n|\n|\r)/gm,"");
-  // for(var i=0,len=dailytime.length;i<len;i++){
-  //   console.log(i+":"+dailytime[i]);
-  // }
   dailytime=dailytime.substr(18,4);
   details['Daily Time On Site']=dailytime;  
 
 
   var keywords=$(".topkeywordellipsis[title]").text();
-  // $(".topkeywordellipsis span:nth-child(2)").text()
-  // for(var i=0,len=keywords.length;i<len;i++){
-  //   console.log(keywords[i]);
-  // }
-  // console.log(keywords);
   details['Search Keywords']=keywords;
   callback(details);
 }
 
 function showAlexaDetails(data){
-  console.log(data);
+ var alexaDetail=[];
+ for(d in data){
+    alexaDetail.push(d+':'+data[d]);
+    alexaDetail.push('\n');
+ }
+ console.log(alexaDetail);
+ console.log("Going to write into a file");
+  fs.writeFile('Alexa.txt', alexaDetail,  function(err) {
+     if (err) {
+         return console.error(err);
+     }
+  console.log("Data written successfully!");
+  });
 }
