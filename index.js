@@ -3,57 +3,17 @@ var cheerio = require('cheerio');
 var URL = require('url-parse');
 var fs = require('fs');
 
-var START_URL = "http://www.roposo.com";
+var START_URL = "http://www.roposo.com/";
 
 
 
 var links=[];
 
-function getUrls($,callback){
-  var link = $("a[href^='/']");
-  link.each(function() {
-      links.push($(this).attr('href'));
-  });
-  callback(links);
-}
-
-function urlss(data){
-  for(var i=0,len=data.length;i<len;i++){
-    // console.log(START_URL+data[i]);
-    if(START_URL+data[i] === "http://www.roposo.com/contact"){
-      crawlContact(START_URL+data[i]);
-    }
-    if(START_URL+data[i] === "http://www.roposo.com/about"){
-      crawlAbout(START_URL+data[i]);
-    }
-
-  }
-}
 
 
-function crawlContact(url){
-  request(url,function(error,response,html){
-     if(error){
-      console.log(error);
-    }else if (response.statusCode == 200) {
-      var $ = cheerio.load(html);
-        getEmailPhone($,showContact);
-    } 
-  });
-}
 
-function crawlAbout(url){
-  request(url,function(error,response,html){
-     if(error){
-      console.log(error);
-    }else if (response.statusCode == 200) {
-      var $ = cheerio.load(html);
-        getPtag($,showPtag);
-    } 
-  });
-}
 
-function getEmailPhone($,callback){
+function getContact($,callback){
   var z=String($.html());
   var content=$(z).text();
   content=content.replace('\n',"");
@@ -88,7 +48,7 @@ function showContact(data,data1){
   });
 }
 
-function getPtag($,callback){
+function getAbout($,callback){
   var ptag=[];
   $('p').each(function(index){
     ptag.push(index+":\n");
@@ -97,7 +57,7 @@ function getPtag($,callback){
   callback(ptag);
 }
 
-function showPtag(data){
+function showAbout(data){
   console.log("Going to write into a file");
   fs.writeFile('About.txt', data,  function(err) {
      if (err) {
@@ -109,12 +69,75 @@ function showPtag(data){
 }
 
 
-request(START_URL, function (error, response, html) {
+
+
+function crawlContact(url){
+  request(url,function(error,response,html){
+     if(error){
+      console.log(error);
+    }else if (response.statusCode == 200) {
+      var $ = cheerio.load(html);
+        getContact($,showContact);
+    } 
+  });
+}
+
+function crawlAbout(url){
+  request(url,function(error,response,html){
+     if(error){
+      console.log(error);
+    }else if (response.statusCode == 200) {
+      var $ = cheerio.load(html);
+        getAbout($,showAbout);
+    } 
+  });
+}
+
+
+function getUrls($,callback){
+  var link = $("a[href^='/']");
+  link.each(function() {
+      links.push($(this).attr('href'));
+  });
+  callback(links);
+}
+
+function urlss(data){
+  for(var i=0,len=data.length;i<len;i++){
+    // console.log(START_URL+data[i]);
+    if(START_URL+data[i] === "http://www.roposo.com/contact"){
+      crawlContact(START_URL+data[i]);
+    }
+    if(START_URL+data[i] === "http://www.roposo.com/about"){
+      crawlAbout(START_URL+data[i]);
+    }
+
+  }
+}
+
+// request(START_URL, function (error, response, html) {
+//   if(error){
+//     console.log(error);
+//   }else if (response.statusCode == 200) {
+//     var $ = cheerio.load(html);
+//       getUrls($,urlss);
+//   }
+// });
+
+
+
+
+//-------------------------------------------
+//-------------Alexa Details-----------------
+//-------------------------------------------
+
+var alexa_url = 'http://www.alexa.com/siteinfo/'+ START_URL;
+
+request(alexa_url, function (error, response, html) {
   if(error){
     console.log(error);
   }else if (response.statusCode == 200) {
     var $ = cheerio.load(html);
-      getUrls($,urlss);
+    console.log($.html());
   }
 });
-
