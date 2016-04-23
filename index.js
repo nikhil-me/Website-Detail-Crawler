@@ -3,7 +3,7 @@ var cheerio = require('cheerio');
 var URL = require('url-parse');
 var fs = require('fs');
 
-var START_URL = "http://www.roposo.com/";
+var START_URL = "http://www.roposo.com";
 
 
 
@@ -39,7 +39,7 @@ function showContact(data,data1){
   var email="Email are :"+ data.join();
   var phoneno="Phone No.:"+data1.join();
   var contactDetais= email + '\n' +phoneno;
-  console.log("Going to write into a file");
+  console.log("Going to write into Contact file");
   fs.writeFile('Contact.txt', contactDetais,  function(err) {
      if (err) {
          return console.error(err);
@@ -54,11 +54,12 @@ function getAbout($,callback){
     ptag.push(index+":\n");
     ptag.push($(this).text());
   });
+  ptag=ptag.replace(/(\r\n|\n|\r)/gm,"")
   callback(ptag);
 }
 
 function showAbout(data){
-  console.log("Going to write into a file");
+  console.log("Going to write into About file");
   fs.writeFile('About.txt', data,  function(err) {
      if (err) {
          return console.error(err);
@@ -95,34 +96,60 @@ function crawlAbout(url){
 
 
 function getUrls($,callback){
-  var link = $("a[href^='/']");
-  link.each(function() {
-      links.push($(this).attr('href'));
-  });
+  var z=String($.html());
+
+  // This is to find all the urls in href
+  while(z.indexOf("href")!=-1){
+    var ind=z.indexOf("href");
+    var len=z.length;
+    var cat=z.substr(ind,len-ind);
+    var ind1=cat.indexOf("\"");
+    if(ind1== -1){
+      z=cat.substr(5,cat.length-5);
+      continue;
+    }
+    var len1=cat.length;
+    var cat1=cat.substr(ind1+1,len1-ind1-1);
+    var ind2=cat1.indexOf("\"");
+    if(ind2 == -1){
+      z=cat1.substr(2,cat1.length-2);
+    }
+    var st=cat1.substr(0,ind2);
+    z=cat1.substr(ind2+1,cat1.length-ind2-1)
+    links.push(st);
+  }
+
+  // This is by using jquery
+  //
+
+  /* var link = $("a[href^='/']");
+  // link.each(function() {
+  //     links.push($(this).attr('href'));
+    });*/
   callback(links);
 }
 
 function urlss(data){
-  for(var i=0,len=data.length;i<len;i++){
-    // console.log(START_URL+data[i]);
-    if(START_URL+data[i] === "http://www.roposo.com/contact"){
-      crawlContact(START_URL+data[i]);
-    }
-    if(START_URL+data[i] === "http://www.roposo.com/about"){
-      crawlAbout(START_URL+data[i]);
-    }
+  console.log(data);
+  // console.log("@");
+  // for(var i=0,len=data.length;i<len;i++){
+  //   if(START_URL+data[i] === "http://www.roposo.com/contact"){
+  //   }
+  //   if(START_URL+data[i] === "http://www.roposo.com/about"){
+  //     crawlAbout(START_URL+data[i]);
+  //   }
 
-  }
+  // }
 }
 
-// request(START_URL, function (error, response, html) {
-//   if(error){
-//     console.log(error);
-//   }else if (response.statusCode == 200) {
-//     var $ = cheerio.load(html);
-//       getUrls($,urlss);
-//   }
-// });
+request(START_URL, function (error, response, html) {
+  if(error){
+    console.log(error);
+  }else if (response.statusCode == 200) {
+    var $ = cheerio.load(html);
+      getUrls($,urlss);
+  }
+});
 
 
 
@@ -133,15 +160,15 @@ function urlss(data){
 
 var alexa_url = 'http://www.alexa.com/siteinfo/'+ START_URL;
 
-request(alexa_url, function (error, response, html) {
-  if(error){
-    console.log(error);
-  }else if (response.statusCode == 200) {
-    var $ = cheerio.load(html);
-    // console.log($.html());
-    alexaDetails($,showAlexaDetails);
-  }
-});
+// request(alexa_url, function (error, response, html) {
+//   if(error){
+//     console.log(error);
+//   }else if (response.statusCode == 200) {
+//     var $ = cheerio.load(html);
+//     // console.log($.html());
+//     alexaDetails($,showAlexaDetails);
+//   }
+// });
 
 
 function alexaDetails($,callback){
@@ -193,7 +220,7 @@ function showAlexaDetails(data){
     alexaDetail.push('\n');
  }
  console.log(alexaDetail);
- console.log("Going to write into a file");
+ console.log("Going to write into Alexa file");
   fs.writeFile('Alexa.txt', alexaDetail,  function(err) {
      if (err) {
          return console.error(err);
