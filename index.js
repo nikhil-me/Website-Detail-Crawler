@@ -138,6 +138,28 @@ request(alexa_url, function (error, response, html) {
     console.log(error);
   }else if (response.statusCode == 200) {
     var $ = cheerio.load(html);
-    console.log($.html());
+    // console.log($.html());
+    alexaDetails($,showAlexaDetails);
   }
 });
+
+
+function alexaDetails($,callback){
+  var details={
+    'Global Rank': '',
+    'India Rank' : ''
+  };
+  var grank=$("img[title|='Global rank icon']").next().text();
+  var irank=$("img[title|='India Flag']").next().text();
+  grank=grank.replace(/\n/g,'');
+  grank=grank.replace(/ /g,'');
+  irank=irank.replace(/\n/g,'');
+  irank=irank.replace(/ /g,'');
+  details['Global Rank']=grank;
+  details['India Rank']=irank;
+  callback(details);
+}
+
+function showAlexaDetails(data){
+  console.log(data);
+}
