@@ -150,7 +150,8 @@ function alexaDetails($,callback){
     'India Rank' : '',
     'Bounce Rate' : '',
     'Daily Pageviews per Visitor' : '',
-    'Daily Time On Site' : ''
+    'Daily Time On Site' : '',
+    'Search Keywords' : ''
   };
   var grank=$("img[title|='Global rank icon']").next().text();
   var irank=$("img[title|='India Flag']").next().text();
@@ -181,6 +182,15 @@ function alexaDetails($,callback){
   // }
   dailytime=dailytime.substr(18,4);
   details['Daily Time On Site']=dailytime;  
+
+
+  var keywords=$(".topkeywordellipsis[title]").text();
+  // $(".topkeywordellipsis span:nth-child(2)").text()
+  // for(var i=0,len=keywords.length;i<len;i++){
+  //   console.log(keywords[i]);
+  // }
+  // console.log(keywords);
+  details['Search Keywords']=keywords;
   callback(details);
 }
 
