@@ -1,4 +1,4 @@
-var request = require('request').defaults({proxy:'http://ipg_2012066:karankannu@192.168.1.107:3128/', agent:false});
+var request = require('request');
 var cheerio = require('cheerio');
 var URL = require('url-parse');
 var fs = require('fs');
