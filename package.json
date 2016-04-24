@@ -1,6 +1,6 @@
 {
   "name": "website-detail-crawler",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A demo package for crawing the basic details of a website ",
   "main": "index.js",
   "scripts": {

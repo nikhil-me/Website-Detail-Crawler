@@ -214,7 +214,7 @@ function showAlexaDetails(data){
 
 
 
-var alexa=function(START_URL){
+function alexa(START_URL){
   var alexa_url = 'http://www.alexa.com/siteinfo/'+START_URL;
   request(alexa_url, function (error, response, html) {
     if(error){
@@ -228,7 +228,7 @@ var alexa=function(START_URL){
 
 // alexa('http://www.roposo.com/');
 
-var contactAndAbout=function(START_URL){
+function contactAndAbout(START_URL){
   if(START_URL[START_URL.length-1]=='/'){
     START_URL=START_URL.slice(0,-1);
   }
@@ -244,5 +244,5 @@ var contactAndAbout=function(START_URL){
 
 // contactAndAbout('http://www.roposo.com/');
 
-exports alexa=alexa;
-exports contactAndAbout=contactAndAbout;
+exports.contactAndAbout=contactAndAbout;
+exports.alexa=alexa;
